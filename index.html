@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktive KI-Checkliste</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f0f2f5;
+            --white: #ffffff;
+            --border-color: #dcdde1;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: #2f3640;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 850px;
+            width: 100%;
+            background: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+        }
+
+        h1 { margin: 0; color: var(--primary-color); font-size: 1.8em; }
+        h2 { color: var(--accent-color); font-size: 1.3em; margin-top: 40px; border-left: 4px solid var(--accent-color); padding-left: 15px; }
+
+        .task-card {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .task-header {
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        details summary {
+            font-weight: bold;
+            color: var(--accent-color);
+            cursor: pointer;
+            margin-top: 10px;
+            outline: none;
+            list-style: none;
+        }
+        details summary::-webkit-details-marker { display: none; }
+        details summary:before { content: "ℹ️ Mehr Infos: "; font-size: 0.9em; }
+
+        .explanation {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 0.95em;
+            color: #555;
+            border-left: 3px solid #ddd;
+        }
+
+        /* Smiley Rating Styles */
+        .rating-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 10px;
+            background: #fdfdfd;
+            border-radius: 30px;
+            border: 1px solid #eee;
+        }
+
+        .smileys {
+            display: flex;
+            gap: 15px;
+        }
+
+        .smileys label {
+            font-size: 1.8em;
+            cursor: pointer;
+            transition: transform 0.2s, opacity 0.2s;
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
+
+        .smileys input { display: none; }
+
+        .smileys input:checked + label {
+            filter: grayscale(0%);
+            opacity: 1;
+            transform: scale(1.3);
+        }
+
+        .notes-area {
+            width: 100%;
+            margin-top: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 40px;
+        }
+
+        .footer-info {
+            margin-top: 40px;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .print-btn {
+            background-color: #7f8c8d;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .print-btn:hover { background-color: #2c3e50; }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .container { box-shadow: none; width: 100%; padding: 0; }
+            .print-btn, details summary { display: none; }
+            .explanation { display: block !important; border: 1px solid #eee; }
+            .task-card { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <header>
+        <h1>Checkliste: KI reflektiert nutzen</h1>
+        <p>Selbsteinschätzung für Referate & Präsentationen (Jgst. 11+)</p>
+    </header>
+
+    <h2>1. Klärung vor der KI-Nutzung</h2>
+    
+    <div class="task-card">
+        <div class="task-header">Thema klar eingegrenzt und fachlich präzisiert</div>
+        <details>
+            <summary></summary>
+            <div class="explanation">Hast du ein konkretes Unterthema gewählt? Die KI liefert nur dann gute Ergebnisse, wenn das Feld nicht zu weit gefasst ist[cite: 5].</div>
+        </details>
+        <div class="rating-container">
+            <span>Stand:</span>
+            <div class="smileys">
+                <input type="radio" name="q1" id="q1_1" value="1" data-store="q1"><label for="q1_1" title="Gar nicht">😞</label>
+                <input type="radio" name="q1" id="q1_2" value="2" data-store="q1"><label for="q1_2" title="Wenig">🙁</label>
+                <input type="radio" name="q1" id="q1_3" value="3" data-store="q1"><label for="q1_3" title="Mittel">😐</label>
+                <input type="radio" name="q1" id="q1_4" value="4" data-store="q1"><label for="q1_4" title="Gut">🙂</label>
+                <input type="radio" name="q1" id="q1_5" value="5" data-store="q1"><label for="q1_5" title="Sehr gut">🤩</label>
+            </div>
+        </div>
+        <textarea class="notes-area" data-store="n1" placeholder="Notizen zur Themenpräzisierung..."></textarea>
+    </div>
+
+    <div class="task-card">
+        <div class="task-header">Eigene Leitfragen formuliert</div>
+        <details>
+            <summary></summary>
+            <div class="explanation">Bevor du die KI fragst, solltest du wissen, was DU wissen willst. Formuliere eigene Fragen, um den Fokus zu behalten[cite: 8].</div>
+        </details>
+        <div class="rating-container">
+            <span>Stand:</span>
+            <div class="smileys">
+                <input type="radio" name="q2" id="q2_1" value="1" data-store="q2"><label for="q2_1">😞</label>
+                <input type="radio" name="q2" id="q2_2" value="2" data-store="q2"><label for="q2_2">🙁</label>
+                <input type="radio" name="q2" id="q2_3" value="3" data-store="q2"><label for="q2_3">😐</label>
+                <input type="radio" name="q2" id="q2_4" value="4" data-store="q2"><label for="q2_4">🙂</label>
+                <input type="radio" name="q2" id="q2_5" value="5" data-store="q2"><label for="q2_5">🤩</label>
+            </div>
+        </div>
+        <textarea class="notes-area" data-store="n2" placeholder="Deine Leitfragen..."></textarea>
+    </div>
+
+    <h2>2. Zielführende Prompts & Verfeinerung</h2>
+    
+    <div class="task-card">
+        <div class="task-header">Rolle und Kontext der KI definiert</div>
+        <details>
+            <summary></summary>
+            <div class="explanation">Hast du der KI gesagt, wer sie ist (z.B. Expertin für Biologie) und für wen der Text ist? Das bestimmt das sprachliche Niveau[cite: 11, 14].</div>
+        </details>
+        <div class="rating-container">
+            <span>Stand:</span>
+            <div class="smileys">
+                <input type="radio" name="q3" id="q3_1" value="1" data-store="q3"><label for="q3_1">😞</label>
+                <input type="radio" name="q3" id="q3_2" value="2" data-store="q3"><label for="q3_2">🙁</label>
+                <input type="radio" name="q3" id="q3_3" value="3" data-store="q3"><label for="q3_3">😐</label>
+                <input type="radio" name="q3" id="q3_4" value="4" data-store="q3"><label for="q3_4">🙂</label>
+                <input type="radio" name="q3" id="q3_5" value="5" data-store="q3"><label for="q3_5">🤩</label>
+            </div>
+        </div>
+        <textarea class="notes-area" data-store="n3" placeholder="Welche Rolle hast du zugewiesen?"></textarea>
+    </div>
+
+    <div class="task-card">
+        <div class="task-header">Prompts gezielt verfeinert (Refinements)</div>
+        <details>
+            <summary></summary>
+            <div class="explanation">Hast du nachgefragt oder Beispiele verlangt? Nutze die KI im Dialog, um tiefere Inhalte zu erhalten[cite: 18, 21].</div>
+        </details>
+        <div class="rating-container">
+            <span>Stand:</span>
+            <div class="smileys">
+                <input type="radio" name="q4" id="q4_1" value="1" data-store="q4"><label for="q4_1">😞</label>
+                <input type="radio" name="q4" id="q4_2" value="2" data-store="q4"><label for="q4_2">🙁</label>
+                <input type="radio" name="q4" id="q4_3" value="3" data-store="q4"><label for="q4_3">😐</label>
+                <input type="radio" name="q4" id="q4_4" value="4" data-store="q4"><label for="q4_4">🙂</label>
+                <input type="radio" name="q4" id="q4_5" value="5" data-store="q4"><label for="q4_5">🤩</label>
+            </div>
+        </div>
+        <textarea class="notes-area" data-store="n4" placeholder="Wie hast du nachgesteuert?"></textarea>
+    </div>
+
+    <h2>3. Kritische Prüfung & Eigenleistung</h2>
+    
+    <div class="task-card">
+        <div class="task-header">Quellenlage in Analog-Quellen gegengeprüft</div>
+        <details>
+            <summary></summary>
+            <div class="explanation">Wichtig: Prüfe Fakten in echten Büchern oder seriösen Datenbanken nach, um Halluzinationen der KI auszuschließen[cite: 27].</div>
+        </details>
+        <div class="rating-container">
+            <span>Stand:</span>
+            <div class="smileys">
+                <input type="radio" name="q5" id="q5_1" value="1" data-store="q5"><label for="q5_1">😞</label>
+                <input type="radio" name="q5" id="q5_2" value="2" data-store="q5"><label for="q5_2">🙁</label>
+                <input type="radio" name="q5" id="q5_3" value="3" data-store="q5"><label for="q5_3">😐</label>
+                <input type="radio" name="q5" id="q5_4" value="4" data-store="q5"><label for="q5_4">🙂</label>
+                <input type="radio" name="q5" id="q5_5" value="5" data-store="q5"><label for="q5_5">🤩</label>
+            </div>
+        </div>
+        <textarea class="notes-area" data-store="n5" placeholder="Welche Quelle hast du zur Prüfung genutzt?"></textarea>
+    </div>
+
+    <div class="task-card">
+        <div class="task-header">Eigene Formulierungen und Bewertungen ergänzt</div>
+        <details>
+            <summary></summary>
+            <div class="explanation">Die KI liefert nur Rohmaterial. Deine Aufgabe ist es, eigene Beispiele und Bewertungen hinzuzufügen[cite: 35].</div>
+        </details>
+        <div class="rating-container">
+            <span>Stand:</span>
+            <div class="smileys">
+                <input type="radio" name="q6" id="q6_1" value="1" data-store="q6"><label for="q6_1">😞</label>
+                <input type="radio" name="q6" id="q6_2" value="2" data-store="q6"><label for="q6_2">🙁</label>
+                <input type="radio" name="q6" id="q6_3" value="3" data-store="q6"><label for="q6_3">😐</label>
+                <input type="radio" name="q6" id="q6_4" value="4" data-store="q6"><label for="q6_4">🙂</label>
+                <input type="radio" name="q6" id="q6_5" value="5" data-store="q6"><label for="q6_5">🤩</label>
+            </div>
+        </div>
+        <textarea class="notes-area" data-store="n6" placeholder="Beispiele für deine Anpassungen..."></textarea>
+    </div>
+
+    <h2>4. Abschließende Selbstkontrolle</h2>
+    
+    <div class="task-card">
+        <div class="task-header">Ich verstehe alle Inhalte fachlich.</div>
+        <details>
+            <summary></summary>
+            <div class="explanation">Kannst du jeden Begriff in deiner Präsentation ohne Hilfe erklären? Das ist die Basis für ein gutes Prüfungsgespräch[cite: 49].</div>
+        </details>
+        <div class="rating-container">
+            <span>Stand:</span>
+            <div class="smileys">
+                <input type="radio" name="q7" id="q7_1" value="1" data-store="q7"><label for="q7_1">😞</label>
+                <input type="radio" name="q7" id="q7_2" value="2" data-store="q7"><label for="q7_2">🙁</label>
+                <input type="radio" name="q7" id="q7_3" value="3" data-store="q7"><label for="q7_3" title="Fast alles">😐</label>
+                <input type="radio" name="q7" id="q7_4" value="4" data-store="q7"><label for="q7_4">🙂</label>
+                <input type="radio" name="q7" id="q7_5" value="5" data-store="q7"><label for="q7_5">🤩</label>
+            </div>
+        </div>
+        <textarea class="notes-area" data-store="n7" placeholder="Gibt es noch Unklarheiten?"></textarea>
+    </div>
+
+    <div class="footer-info">
+        <p>Verantwortung, Auswahl und Argumentation liegen bei dir. KI unterstützt Recherche und Struktur[cite: 53, 54].</p>
+        <button class="print-btn" onclick="window.print()">Als PDF speichern (A4)</button>
+    </div>
+</div>
+
+<script>
+    // Lokale Speicherung konfigurieren
+    const storageKey = 'ki_interactive_checklist_v2';
+
+    function saveState() {
+        const data = {};
+        document.querySelectorAll('[data-store]').forEach(el => {
+            if (el.type === 'radio') {
+                if (el.checked) data[el.id] = true;
+            } else {
+                data[el.getAttribute('data-store')] = el.value;
+            }
+        });
+        localStorage.setItem(storageKey, JSON.stringify(data));
+    }
+
+    function loadState() {
+        const saved = localStorage.getItem(storageKey);
+        if (saved) {
+            const data = JSON.parse(saved);
+            document.querySelectorAll('[data-store]').forEach(el => {
+                if (el.type === 'radio') {
+                    if (data[el.id]) el.checked = true;
+                } else {
+                    const val = data[el.getAttribute('data-store')];
+                    if (val !== undefined) el.value = val;
+                }
+            });
+        }
+    }
+
+    // Automatisches Speichern bei jeder Änderung
+    document.getElementById('app').addEventListener('input', saveState);
+
+    // Initialisierung beim Laden
+    window.onload = loadState;
+</script>
+
+</body>
+</html>
